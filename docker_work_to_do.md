@@ -272,7 +272,10 @@ Tum seekhoge ki **multiple containers** ko ek saath kaise manage karte hain (**D
 - **Sensitive data** (passwords, API keys) ko **code mein nahi** rakhna
 - **`.env` file** mein rakhna hai
 - Compose file mein **reference** karna hai: `${DB_PASSWORD}`
-- Ye **security best practice** hai
+- Ye **security best practice**hai                                                                                                                          
+Without any import kaise access karega?
+Docker Compose ka apna built-in feature hai ki wo .env file automatically read karta hai agar wo same folder hierarchy me ho jahan docker-compose.yml rakha hai.
+Isliye tumhe manually import karne ki zarurat nahi hai.
 
 **Task 5: App Code Mein Environment Variable Use Karna**
 - Code mein **hardcoded values** nahi
