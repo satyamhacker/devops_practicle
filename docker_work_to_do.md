@@ -291,6 +291,11 @@ Isliye tumhe manually import karne ki zarurat nahi hai.
 - **Specific service** ke logs dekh sakte ho
 - **Real-time** logs stream hote hain
 - **Debugging** ke liye useful
+Agar application code me print ya console.log nahi hai to logs kyun aayenge?
+Docker Compose ke logs command container ke stdout/stderr output ko capture karta hai. Matlab:
+- Agar tumhare app code me console.log, print, ya koi logging framework (winston, log4j, etc.) use nahi hua → application-level logs nahi aayenge.
+- Lekin container ke andar chalne wale base process (jaise MySQL, Redis, Nginx) apne khud ke logs likhte hain stdout/stderr pe → wo logs tumhe docker compose logs me dikhenge.
+- Agar ek container completely silent hai (kuch bhi stdout/stderr pe nahi likh raha) → docker compose logs me kuch bhi nahi dikhega.
 
 **Task 8: Stack Stop Karna**
 - **Ek command** se **saari services** stop hongi
