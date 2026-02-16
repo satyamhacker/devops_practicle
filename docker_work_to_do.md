@@ -57,7 +57,7 @@ COPY use hua hai ADD ki jagah.
 CMD/ENTRYPOINT Exec Form ([]) mein hai.
 Image remote registry par visible ho aur tag mein version number ho.
 
----
+---===============Done upto above ===========
 
 ## 🧩 Module 3: The Data Manager (Persistence & Backup)
 
