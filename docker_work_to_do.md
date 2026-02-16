@@ -338,188 +338,667 @@ Tum seekhoge ki **multiple containers** ko ek saath kaise manage karte hain (**D
 *   `.env` file se variables load ho rahe hain.
 
 ---
-## 🧩 Module 6: The Optimizer (Production Grade Builds & Multi-Arch) [UPDATED]
-1. The Concept
-Image size reduction, Build Speed, aur Cross-Platform Compatibility.
-2. Why & Learning Outcome (Real-World Scenario)
-Kyun Zaroori Hai? Badi images deploy hone mein time leti hain. Agar tumhara laptop M1 hai aur server Linux hai, toh normal build fail ho sakta hai.
-Learning: Multi-stage builds, BuildKit, Layer Caching, Docker Buildx.
-Agar Nahi Kiya: Deployment slow hoga, architecture mismatch ayega.
-Problem Solved: Faster CI/CD pipelines aur portable images.
-3. Practical Tasks
-BuildKit Enable karo – Build shuru karne se pehle export DOCKER_BUILDKIT=1 set karo taaki advanced caching features use kar sako.
-Current image size check karo – my-app:v1 ka size dekho.
-Multi-stage Dockerfile likho – Stage 1 (builder) mein dependencies install karo, Stage 2 (final) mein sirf built artifacts copy karo, aur chhoti base image (alpine ya distroless) use karo.
-Nayi image build karo – tag my-app:optimized.
-Size compare karo – purani aur nayi image ka size.
-Layer caching optimize karo – Dockerfile mein pehle sirf dependency files copy karo, phir RUN install, phir baaki code copy karo.
-(Advanced) Distroless image use karo – final stage ko gcr.io/distroless/python3 se replace karo. Build karo aur run karo.
-Multi-Architecture Build karo – docker buildx ka use karke image ko linux/amd64 aur linux/arm64 dono ke liye build karo.
-Push Multi-arch Image – Is image ko registry par push karo aur verify karo ki manifest list create hua hai.
-4. Definition of Done
-Image size noticeably reduced.
-BuildKit enable tha build ke waqt.
-Multi-stage build successful.
-Image alag-alag architecture (Mac vs Linux) par bina error ke run ho rahi hai.
+
+## 🧩 Module 6: The Optimizer (Production Grade Builds & Multi-Arch)
+
+### 1. The Concept - Kya Seekhoge?
+Tum seekhoge ki **Docker images ko optimize** kaise karte hain (size kam karna, build speed badhana) aur **cross-platform images** kaise banate hain jo **different architectures** (Intel, ARM, M1 Mac) par chale.
+
+### 2. Why & Learning Outcome - Kyun Zaroori Hai?
+**Real Production Scenario:** Ek **500MB image** ko production server par deploy karne mein **5-10 minutes** lagte hain. Agar tumhare paas **100 servers** hain, toh ye **massive time waste** hai. Plus, agar tumne **M1 Mac** par image build ki aur **Linux server** par deploy kari, toh **architecture mismatch** se container **crash** ho jayega.
+
+**Seekhoge:**
+- **Multi-stage builds:** Build dependencies ko final image se **alag** rakhna
+- **Layer caching:** Rebuild time **90% kam** karna
+- **BuildKit:** Advanced caching aur **parallel builds**
+- **Multi-arch images:** Ek image **sabhi platforms** par chale
+
+**Agar ye nahi kiya:** 
+- **Deployment slow** hoga - CI/CD pipeline mein **hours waste** honge
+- **Architecture mismatch** se production mein **runtime errors** aayenge
+- **Bandwidth waste** hoga - badi images **network** par load dalti hain
+
+### 3. Practical Tasks - Step by Step Kya Karna Hai
+
+#### BuildKit & Size Optimization
+**Task 1: BuildKit Enable Karna**
+- Docker ke **advanced build engine** ko enable karna hai
+- Ye **parallel builds** aur **better caching** provide karta hai
+- Environment variable set karna hai: `DOCKER_BUILDKIT=1`
+- Ye **build speed 2-3x faster** kar deta hai
+
+**Task 2: Current Image Size Check Karna**
+- Apni **existing image** (`my-app:v1`) ka size dekhna hai
+- `docker images` command use karni hai
+- Ye **baseline** hai - optimization ke baad **compare** karenge
+- Normally Python/Node apps **300-500MB** hoti hain
+
+#### Multi-Stage Build
+**Task 3: Multi-Stage Dockerfile Likhna**
+- **Stage 1 (Builder):** Dependencies install karna, code compile karna
+- **Stage 2 (Final):** Sirf **runtime files** copy karna
+- **Build tools** (gcc, npm, pip) final image mein **nahi** aayenge
+- Base image **alpine** ya **slim** variant use karna
+
+**Task 4: Optimized Image Build Karna**
+- Nayi Dockerfile se image build karni hai
+- Tag **`my-app:optimized`** dena hai
+- BuildKit **automatically** best practices apply karega
+- Build time mein **progress** dikhega (BuildKit feature)
+
+**Task 5: Size Comparison Karna**
+- **Purani** aur **nayi** image ka size compare karna hai
+- Normally **50-70% size reduction** milta hai
+- Example: 500MB → 150MB
+- Ye **deployment time** ko **drastically reduce** karta hai
+
+#### Layer Caching Optimization
+**Task 6: Dockerfile Layer Order Optimize Karna**
+- **Pehle:** Dependency files copy karo (`requirements.txt`, `package.json`)
+- **Phir:** Dependencies install karo (`RUN pip install`)
+- **Last:** Application code copy karo
+- Agar **code change** hua, toh **dependencies re-install nahi** hongi
+
+#### Advanced: Distroless Images
+**Task 7: Distroless Image Use Karna**
+- **Google's distroless** images use karni hain
+- Isme **shell, package manager** nahi hote - **ultra secure**
+- Final stage: `FROM gcr.io/distroless/python3`
+- Image size **aur bhi kam** hoga, security **maximum**
+
+**Task 8: Distroless Image Test Karna**
+- Build karke container run karna hai
+- **Shell access nahi** milega (security feature)
+- App **normally** chalegi
+- Ye **production-grade security** hai
+
+#### Multi-Architecture Support
+**Task 9: Docker Buildx Setup Karna**
+- **Buildx** Docker ka **multi-platform builder** hai
+- Builder instance create karna hai
+- Ye **emulation** use karke **different architectures** ke liye build karta hai
+- Ek baar setup, **hamesha** use kar sakte ho
+
+**Task 10: Multi-Arch Image Build Karna**
+- **`--platform`** flag use karna hai
+- `linux/amd64` (Intel/AMD servers) aur `linux/arm64` (ARM, M1 Mac) dono ke liye build
+- Ek hi command se **dono images** ban jayengi
+- Ye **universal compatibility** deta hai
+
+**Task 11: Multi-Arch Image Registry Par Push Karna**
+- Image ko **Docker Hub** ya **GitHub Container Registry** par push karna hai
+- Docker **manifest list** automatically create karega
+- Manifest list mein **dono architectures** ki info hogi
+- User jis platform se pull karega, **sahi image** automatically download hogi
+
+**Task 12: Multi-Arch Verify Karna**
+- Registry par jaake **manifest** check karna hai
+- `docker manifest inspect` command use karni hai
+- Dono architectures **listed** honi chahiye
+- Ye **proof** hai ki image **portable** hai
+
+### 4. Definition of Done - Kaise Pata Chalega Success Hua?
+- Image size **50%+ reduce** hua (original se compare karke)
+- **BuildKit enabled** tha aur build **faster** hua
+- **Multi-stage build** successfully kaam kar rahi hai
+- Image **different architectures** (amd64, arm64) par **bina error** run ho rahi hai
+- Registry par **manifest list** visible hai
 
 ---
 
-## 🧩 Module 7: The Security Guard (Non‑Root & Read-Only)
+# Module 7-10 Expanded Content
 
-### 1. The Concept
-Container Security Hardening aur Privilege Restriction.
+## 🔒 Module 7: The Security Guard (Non‑Root & Read-Only)
 
-### 2. Why & Learning Outcome (Real-World Scenario)
-*   **Kyun Zaroori Hai?** Default containers `root` user pe chalte hain. Agar hacker container compromise karle, toh usse host machine ka root access mil sakta hai.
-*   **Learning:** Non-root users, Read-only filesystems, Tmpfs.
-*   **Agar Nahi Kiya:** Security breach ki situation mein attacker poora server hack kar sakta hai.
-*   **Problem Solved:** Attack surface kam karna aur Privilege Escalation rokna.
+### 1. The Concept - Kya Seekhoge?
+Tum seekhoge ki **containers ko secure** kaise banate hain - **root user se bachna**, **filesystem ko read-only** rakhna, aur **minimum privileges** ke saath run karna.
 
-### 3. Practical Tasks
-1.  **Dockerfile mein non-root user add karo** – `addgroup` aur `adduser` (ya equivalent) commands se. User ka UID/GID 1000 rakho.
-2.  **Files copy karte time `--chown` use karo** – taaki files naye user ke paas ho.
-3.  **`USER` instruction set karo** – naye user par switch karo.
-4.  **Image build karo** – tag `my-app:secure`.
-5.  **Container run karo**.
-6.  **Inside container user verify karo** – `whoami` aur `id` commands se.
-7.  **Privileged operation try karo** – jaise package install karna (e.g., `apk add curl`) – permission denied aana chahiye.
-8.  **Read-Only Filesystem** – Container run karte waqt `--read-only` flag use karo (agar app ko write access nahi chahiye).
-9.  **Tmpfs for Writes** – Agar app ko temporary write access chahiye, toh `tmpfs` mount karo.
+### 2. Why & Learning Outcome - Kyun Zaroori Hai?
+**Real Production Scenario:** Default mein **containers root user** se chalte hain. Agar koi **hacker** tumhari application mein **vulnerability** dhundh le (SQL injection, code execution), toh wo **container ke andar root access** pa jayega. Agar container **host ke saath resources share** kar raha hai, toh hacker **pura server compromise** kar sakta hai.
 
-### 4. Definition of Done
-*   Container non-root user se chal raha hai.
-*   User root nahi hai, isliye package install nahi kar sakta.
-*   Container filesystem read-only hai (security hardening).
+**Real Example:** 2019 mein **Tesla** ke Kubernetes cluster ko hack kiya gaya kyunki containers **root** se chal rahe the aur **cryptocurrency mining** ke liye use kiye gaye.
+
+**Seekhoge:**
+- **Non-root user:** Container ko **limited permissions** wale user se chalana
+- **Read-only filesystem:** Container **files modify nahi** kar sakta
+- **Tmpfs:** Temporary writes ke liye **memory-based storage**
+
+**Agar ye nahi kiya:** 
+- **Security breach** mein attacker ko **full control** mil jayega
+- **Privilege escalation** se **host machine** bhi compromise ho sakta hai
+- **Compliance failures** (SOC2, ISO 27001) - audit fail hoga
+
+### 3. Practical Tasks - Step by Step Kya Karna Hai
+
+#### Non-Root User Setup
+**Task 1: Dockerfile Mein Non-Root User Create Karna**
+- Dockerfile mein **dedicated user** banana hai
+- **UID/GID 1000** set karna hai (standard non-root)
+- Alpine: `addgroup -g 1000 appuser && adduser -D -u 1000 -G appuser appuser`
+- Debian: `groupadd -g 1000 appuser && useradd -u 1000 -g appuser appuser`
+
+**Task 2: File Ownership Set Karna**
+- Files copy karte waqt **`--chown`** flag use karna hai
+- `COPY --chown=appuser:appuser . /app`
+- Ye ensure karta hai ki **files user ke paas** hain, root ke paas nahi
+- Bina iske app **permission errors** dega
+
+**Task 3: USER Instruction Set Karna**
+- Dockerfile mein **`USER appuser`** add karna hai
+- Ye instruction ke **baad** saare commands **non-root** se run honge
+- Ye **last** mein karna hai (dependencies install ke baad)
+- Production mein ye **mandatory** hai
+
+**Task 4: Secure Image Build Karna**
+- Nayi Dockerfile se image build karni hai
+- Tag **`my-app:secure`** dena hai
+- Build **successfully** hona chahiye
+- Koi permission error **nahi** aana chahiye
+
+**Task 5: Container Run Karna**
+- Image se container start karna hai
+- Normal command se run karo
+- App **properly** chalani chahiye
+- Functionality **same** rahegi, security **better** hogi
+
+#### Security Verification
+**Task 6: Container Ke Andar User Verify Karna**
+- Container mein **shell** open karna hai: `docker exec -it <container> sh`
+- **`whoami`** command run karni hai - **`appuser`** dikhna chahiye (root nahi)
+- **`id`** command run karni hai - **UID 1000** dikhna chahiye
+- Ye **proof** hai ki container **non-root** se chal raha hai
+
+**Task 7: Privileged Operation Test Karna**
+- Container ke andar **package install** try karna hai
+- Alpine: `apk add curl` ya Debian: `apt-get install curl`
+- **Permission denied** error aana chahiye
+- Ye **good sign** hai - attacker bhi **tools install nahi** kar payega
+
+#### Read-Only Filesystem
+**Task 8: Read-Only Container Run Karna**
+- Container ko **`--read-only`** flag ke saath run karna hai
+- Filesystem **completely locked** ho jayega
+- Koi bhi file **write/modify nahi** ho sakti
+- Ye **maximum security** hai
+
+**Task 9: Write Operation Test Karna**
+- Container mein exec karke **file create** try karna hai
+- `touch /app/test.txt` - **Read-only file system** error aana chahiye
+- Ye **verify** karta hai ki filesystem **protected** hai
+- Attacker **malware download nahi** kar payega
+
+#### Tmpfs for Temporary Writes
+**Task 10: Tmpfs Mount Karna**
+- Agar app ko **temporary files** likhni hain (logs, cache), toh **tmpfs** use karna hai
+- `--tmpfs /tmp:rw,noexec,nosuid,size=100m`
+- Ye **memory-based** storage hai - **disk pe nahi** likha jayega
+- Container stop hone par **automatically clean** ho jayega
+
+**Task 11: Tmpfs Verify Karna**
+- Container mein `/tmp` folder mein **file create** karna hai
+- `echo "test" > /tmp/test.txt` - **successful** hona chahiye
+- Baaki filesystem **read-only** rahega
+- Ye **balance** hai - security + functionality
+
+**Task 12: Compose Mein Security Settings Add Karna**
+- `docker-compose.yml` mein **security options** add karne hain
+- `read_only: true` aur `tmpfs: [/tmp]`
+- `user: "1000:1000"` specify karna hai
+- Ye **production-ready** configuration hai
+
+### 4. Definition of Done - Kaise Pata Chalega Success Hua?
+- Container **non-root user** se chal raha hai (`whoami` se verify)
+- User **privileged operations nahi** kar sakta (package install fail)
+- Filesystem **read-only** hai (file write fail, except tmpfs)
+- Tmpfs mein **temporary writes** kaam kar rahi hain
 
 ---
 
 ## 🩺 Module 8: The Operator (Healthchecks, Logs & Pruning)
 
-### 1. The Concept
-Reliability, Observability, aur Maintenance.
+### 1. The Concept - Kya Seekhoge?
+Tum seekhoge ki **containers ko monitor** kaise karte hain, **automatic recovery** kaise setup karte hain, aur **system maintenance** kaise karte hain (logs, disk space).
 
-### 2. Why & Learning Outcome (Real-World Scenario)
-*   **Kyun Zaroori Hai?** Application hang ho sakti hai bina crash huye. Logs disk full kar sakte hain. Timezone mismatch se debugging mushkil hoti hai.
-*   **Learning:** Healthchecks, Log Rotation, Timezone Management, System Pruning.
-*   **Agar Nahi Kiya:** Downed service detect nahi hogi. Server disk full hokar crash hoga. Logs ka time samajh nahi aayega.
-*   **Problem Solved:** Self-healing systems aur maintainable infrastructure.
+### 2. Why & Learning Outcome - Kyun Zaroori Hai?
+**Real Production Scenario:** Tumhari application **hang** ho sakti hai bina crash huye - process chal rahi hai lekin **requests handle nahi** kar rahi. Docker ko lagta hai container **healthy** hai, lekin actually **down** hai. Aise mein **customers ko errors** milte rahenge aur tumhe **pata bhi nahi** chalega.
 
-### 3. Practical Tasks
-1.  **Dockerfile mein `HEALTHCHECK` add karo** – interval 30s, timeout 3s, start-period 5s, retries 3. Command curl se app ke root endpoint ko check karo.
-2.  **Image build karo** – `my-app:health`.
-3.  **Container run karo**.
-4.  **Health status check karo** – `docker ps` mein `(healthy)` dikhna chahiye. `docker inspect` se health details dekho.
-5.  **Restart policy test karo** – container ko `--restart=on-failure:3` ya compose mein `restart: unless-stopped` ke saath run karo. Container ke andar process kill karo. Dekho ki container restart hota hai.
-6.  **Log Rotation Configure karo** – Compose file ya Daemon config mein log size limit set karo (e.g., max-size 10MB).
-7.  **Verify Log Rotation** – Container mein heavy logs generate karo aur check karo ki purani log files automatically delete ho rahi hain ya nahi.
-8.  **Timezone Set karo** – Container mein `TZ` environment variable set karo aur verify karo ki logs ka time host ke time se match kar raha hai.
-9.  **System prune karo** – `docker system prune -a --volumes` (soch samajh kar). Disk space free hua verify karo.
-10. **Inspect command ka use karo** – container ka IP address, environment variables, mounts etc. nikalna seekho using `docker inspect` aur `--format` flag.
-11. **Disk Usage Check** – `docker system df` command se disk usage analyze karo.
+**Problem 2:** Logs **disk full** kar dete hain. Ek production server par **100GB logs** accumulate ho sakte hain 1 month mein. Disk full hone par **saari services crash** ho jayengi.
 
-### 4. Definition of Done
-*   Healthcheck working hai (status healthy).
-*   Crash karne par container restart ho raha hai.
-*   Logs automatic rotate ho rahe hain (disk full nahi ho raha).
-*   Logs ka timestamp sahi hai (timezone fix).
-*   System prune aur disk usage samajh aa gaya.
+**Problem 3:** Logs ka **timezone wrong** hai - debugging karte waqt **time match nahi** hota, confusion hota hai.
+
+**Seekhoge:**
+- **Healthchecks:** Application ki **actual health** check karna
+- **Restart policies:** Crash hone par **automatic recovery**
+- **Log rotation:** Disk space **manage** karna
+- **Timezone management:** Logs ka time **correct** rakhna
+
+**Agar ye nahi kiya:**
+- **Downtime detect nahi** hoga - customers suffer karenge
+- **Disk full** se server crash hoga
+- **Debugging impossible** hoga (wrong timestamps)
+
+### 3. Practical Tasks - Step by Step Kya Karna Hai
+
+#### Healthcheck Setup
+**Task 1: Dockerfile Mein HEALTHCHECK Add Karna**
+- Dockerfile mein **HEALTHCHECK instruction** add karni hai
+- **Interval:** 30 seconds (har 30s mein check)
+- **Timeout:** 3 seconds (3s se zyada lage toh fail)
+- **Start-period:** 5 seconds (startup ke liye grace period)
+- **Retries:** 3 (3 baar fail hone par unhealthy)
+- Command: `curl -f http://localhost:5000/ || exit 1`
+
+**Task 2: Health Image Build Karna**
+- Nayi Dockerfile se image build karni hai
+- Tag **`my-app:health`** dena hai
+- Healthcheck **embedded** ho jayega image mein
+- Har container automatically **monitor** hoga
+
+**Task 3: Container Run Karna**
+- Image se container start karna hai
+- Container **starting** state mein hoga initially
+- **Start-period** ke baad healthcheck **activate** hoga
+- Logs mein healthcheck **output** dikhega
+
+**Task 4: Health Status Verify Karna**
+- `docker ps` command run karni hai
+- Container ke status mein **`(healthy)`** dikhna chahiye
+- `docker inspect <container>` se **detailed health info** milegi
+- **Last 5 healthcheck results** dikhenge
+
+#### Restart Policies
+**Task 5: Restart Policy Test Karna**
+- Container ko **restart policy** ke saath run karna hai
+- `--restart=on-failure:3` (3 baar retry karega)
+- Ya compose mein: `restart: unless-stopped`
+- Ye **production essential** hai
+
+**Task 6: Crash Simulation Karna**
+- Container ke **andar process kill** karna hai
+- `docker exec <container> kill 1` (PID 1 ko kill karo)
+- Container **automatically restart** hona chahiye
+- Logs mein **restart event** dikhega
+
+**Task 7: Restart Count Verify Karna**
+- `docker inspect` se **restart count** dekhna hai
+- Kitni baar restart hua ye **track** hota hai
+- Agar **repeatedly restart** ho raha hai, toh **problem** hai
+- Ye **monitoring alert** ka basis hai
+
+#### Log Management
+**Task 8: Log Rotation Configure Karna**
+- Compose file mein **logging options** add karne hain
+- `max-size: "10m"` (10MB se zyada nahi)
+- `max-file: "3"` (maximum 3 files)
+- Ya daemon.json mein **globally** set karo
+
+**Task 9: Heavy Logs Generate Karna**
+- Container mein **loop** chalake **heavy logs** generate karna hai
+- `while true; do echo "test log"; done`
+- Kuch time baad **old logs rotate** ho jayenge
+- Disk space **controlled** rahega
+
+**Task 10: Log Rotation Verify Karna**
+- Host machine par **log files** check karni hain
+- `/var/lib/docker/containers/<id>/` mein logs hote hain
+- **Multiple log files** dikhni chahiye (rotated)
+- **Total size limit** ke andar hona chahiye
+
+#### Timezone & Maintenance
+**Task 11: Timezone Set Karna**
+- Container mein **`TZ` environment variable** set karna hai
+- `TZ=Asia/Kolkata` (ya tumhara timezone)
+- Compose mein: `environment: - TZ=Asia/Kolkata`
+- Logs ka **timestamp correct** ho jayega
+
+**Task 12: Timezone Verify Karna**
+- Container ke **logs** dekhne hain
+- Timestamp **host ke time** se match karna chahiye
+- `date` command container mein run karke **verify** karo
+- Ye **debugging** ko **easy** banata hai
+
+**Task 13: System Prune Karna**
+- **Unused resources** clean karne hain
+- `docker system prune -a --volumes` (careful!)
+- **Stopped containers, unused images, volumes** delete honge
+- **Disk space free** hoga
+
+**Task 14: Disk Usage Analyze Karna**
+- `docker system df` command run karni hai
+- **Images, containers, volumes** ka size dikhega
+- **Reclaimable space** bhi dikhega
+- Regular **monitoring** ke liye useful
+
+**Task 15: Inspect Command Master Karna**
+- `docker inspect <container>` se **complete info** milti hai
+- **IP address:** `.NetworkSettings.IPAddress`
+- **Environment variables:** `.Config.Env`
+- **Mounts:** `.Mounts`
+- `--format` flag se **specific field** extract karo
+
+### 4. Definition of Done - Kaise Pata Chalega Success Hua?
+- Healthcheck **working** hai (status `healthy` dikhta hai)
+- Container crash hone par **automatically restart** ho raha hai
+- Logs **rotate** ho rahe hain (disk full nahi ho raha)
+- Logs ka **timestamp correct** hai (timezone set hai)
+- **System prune** aur **disk usage** commands samajh aa gayi
 
 ---
 
-## 🧩 Module 9: Production Hardening (Limits, Signals, Secrets & Capabilities) [UPDATED]
-1. The Concept
-Resource Governance, Graceful Shutdowns, aur Advanced Security.
-2. Why & Learning Outcome (Real-World Scenario)
-Kyun Zaroori Hai? Ek buggy service pure server ki RAM kha sakti hai. abrupt stop se data corrupt ho sakta hai.
-Learning: CPU/RAM Limits, SIGTERM handling (Exec Form), Secrets Management, Linux Capabilities.
-Agar Nahi Kiya: Server OOM hoga. Data loss hoga.
-Problem Solved: Stability aur Data Integrity.
-3. Practical Tasks
-Resource Limits
-Container run karo with memory limit – --memory="256m" aur --cpus="0.5".
-Container ke andar stress test karo – memory 300MB allocate karne ki koshish karo. Container OOM kill hona chahiye.
-Stats check karo – docker stats se limit ke andar usage dikhna chahiye.
-Compose mein limits define karo – deploy.resources section mein.
-Signal Handling & PID 1
-App code mein SIGTERM handler add karo – graceful shutdown ka message print karo.
-Image build karo – my-app:signals.
-Verify Exec Form – Ensure karo ki Dockerfile mein CMD Exec Form (["python", "app.py"]) mein hai.
-Container run karo without --init – docker stop karo aur dekho ki graceful shutdown message aata hai ya nahi (Exec form mein aana chahiye).
-Container run karo with --init – docker stop karo, ab message aana chahiye (aur zyada reliable hoga).
-Compose mein init: true add karo aur test karo.
-Stop Grace Period – Compose mein stop_grace_period set karo aur test karo ki container ko shutdown ke liye kitna time mil raha hai.
-Secrets Management
-Docker Swarm initialize karo (temporary) – docker swarm init.
-Secret create karo – echo "password" | docker secret create db_pass -.
-Compose file (v3.8+) likho jo secret ko service mein mount kare.
-App code mein file se password read karo.
-Stack deploy karo – docker stack deploy -c docker-compose.yml myapp.
-Verify karo – container mein /run/secrets/db_pass file exist karti hai.
-Swarm clean up – stack remove karo, swarm leave karo.
-Non‑Swarm alternative – host par secret file banao, compose mein volume mount karo as read-only.
-Capability Dropping (Advanced Security)
-Drop Capabilities – Compose ya run command mein cap_drop: ALL use karo.
-Add Specific Caps – Agar app ko network access chahiye toh sirf NET_BIND_SERVICE add karo.
-4. Definition of Done
-Resource limits enforce hote hain (OOM kill).
-CMD Exec Form mein hai aur signals handle ho rahe hain.
-Secrets file se read hote hain, env variable mein nahi.
-Container ke paas root capabilities nahi hain (cap_drop working).
+## 🛡️ Module 9: Production Hardening (Limits, Signals, Secrets & Capabilities)
+
+### 1. The Concept - Kya Seekhoge?
+Tum seekhoge ki **production-grade containers** kaise banate hain - **resource limits**, **graceful shutdowns**, **secrets management**, aur **security capabilities**.
+
+### 2. Why & Learning Outcome - Kyun Zaroori Hai?
+**Real Production Scenario 1:** Ek **buggy service** mein **memory leak** hai. Wo **slowly-slowly** saari RAM consume kar rahi hai. Eventually **pura server hang** ho jayega aur **saari services down** ho jayengi.
+
+**Real Production Scenario 2:** Database container ko **abruptly stop** kiya (SIGKILL). Database **transaction complete nahi** kar paya. Result: **data corruption** - customer orders **half-saved** hain.
+
+**Real Production Scenario 3:** Database password **environment variable** mein hai. `docker inspect` se **koi bhi dekh** sakta hai. Security audit mein **fail** ho gaye.
+
+**Seekhoge:**
+- **Resource limits:** RAM/CPU **cap** lagana
+- **Signal handling:** **Graceful shutdown** implement karna
+- **Secrets management:** Passwords **securely** store karna
+- **Capabilities:** **Minimum permissions** dena
+
+**Agar ye nahi kiya:**
+- **Server crash** hoga (resource exhaustion)
+- **Data loss** hoga (abrupt shutdowns)
+- **Security breach** hoga (exposed secrets)
+
+### 3. Practical Tasks - Step by Step Kya Karna Hai
+
+#### Resource Limits
+**Task 1: Memory Limit Ke Saath Container Run Karna**
+- Container ko **memory limit** ke saath run karna hai
+- `--memory="256m"` (256MB maximum)
+- `--cpus="0.5"` (0.5 CPU cores)
+- Ye **resource isolation** provide karta hai
+
+**Task 2: Memory Stress Test Karna**
+- Container ke **andar** memory allocate karne ki **koshish** karni hai
+- Python: `x = 'a' * (300 * 1024 * 1024)` (300MB allocate)
+- Container **OOM (Out Of Memory) killed** hona chahiye
+- Ye **protection** hai - ek service **dusri services** ko affect nahi karegi
+
+**Task 3: Stats Monitor Karna**
+- `docker stats` command run karni hai
+- **Real-time** resource usage dikhega
+- Memory usage **limit ke andar** hona chahiye
+- CPU usage bhi **capped** dikhega
+
+**Task 4: Compose Mein Limits Define Karna**
+- `docker-compose.yml` mein **resources section** add karna hai
+- `deploy.resources.limits.memory: 256M`
+- `deploy.resources.limits.cpus: '0.5'`
+- Ye **declarative** approach hai
+
+#### Signal Handling & Graceful Shutdown
+**Task 5: App Code Mein SIGTERM Handler Add Karna**
+- Application code mein **signal handler** likhna hai
+- Python: `signal.signal(signal.SIGTERM, handler)`
+- Handler mein: **connections close** karo, **cleanup** karo
+- **Graceful shutdown message** print karo
+
+**Task 6: Signals Image Build Karna**
+- Updated code se image build karni hai
+- Tag **`my-app:signals`** dena hai
+- Signal handling **embedded** ho jayegi
+- Production-ready **shutdown** hoga
+
+**Task 7: Exec Form Verify Karna**
+- Dockerfile mein **CMD/ENTRYPOINT** check karni hai
+- **Exec form** hona chahiye: `["python", "app.py"]`
+- **Shell form nahi:** `python app.py`
+- Exec form mein **signals properly forward** hote hain
+
+**Task 8: Graceful Shutdown Test Karna (Without Init)**
+- Container **bina `--init`** ke run karna hai
+- `docker stop <container>` command run karni hai
+- Logs mein **graceful shutdown message** aana chahiye
+- Agar **Exec form** sahi hai, toh kaam karega
+
+**Task 9: Init Process Test Karna**
+- Container **`--init` flag** ke saath run karna hai
+- `docker stop` karne par **aur bhi reliable** shutdown hoga
+- Init process **zombie processes** bhi handle karega
+- Ye **best practice** hai
+
+**Task 10: Compose Mein Init Add Karna**
+- `docker-compose.yml` mein **`init: true`** add karna hai
+- Har container **init process** ke saath start hoga
+- **Production recommended** hai
+- Signal handling **guaranteed** hai
+
+**Task 11: Stop Grace Period Set Karna**
+- Compose mein **`stop_grace_period: 30s`** add karna hai
+- Container ko **30 seconds** milenge shutdown ke liye
+- Agar **30s mein shutdown nahi** hua, toh **SIGKILL** bheja jayega
+- Application ki **cleanup time** ke according set karo
+
+#### Secrets Management
+**Task 12: Docker Swarm Initialize Karna**
+- **Temporary** Swarm mode enable karna hai
+- `docker swarm init` command run karni hai
+- Ye **secrets feature** enable karega
+- Testing ke liye **local machine** par hi karo
+
+**Task 13: Secret Create Karna**
+- Docker secret **create** karni hai
+- `echo "mypassword123" | docker secret create db_pass -`
+- Secret **encrypted** store hoga
+- **Environment variable** se better hai
+
+**Task 14: Compose File Mein Secret Mount Karna**
+- Compose file (v3.8+) mein **secrets section** add karna hai
+- Service mein secret **mount** karna hai
+- Secret **`/run/secrets/db_pass`** par available hoga
+- **File** ke form mein milega, env var nahi
+
+**Task 15: App Code Mein Secret Read Karna**
+- Application code mein **file se password read** karna hai
+- Python: `with open('/run/secrets/db_pass') as f: password = f.read()`
+- **Environment variable** se **nahi** read karna
+- Ye **secure** approach hai
+
+**Task 16: Stack Deploy Karna**
+- `docker stack deploy -c docker-compose.yml myapp` run karna hai
+- **Swarm mode** mein deploy hoga
+- Secrets **automatically mount** honge
+- Container mein **verify** karo
+
+**Task 17: Secret Verify Karna**
+- Container ke **andar** `/run/secrets/` folder check karna hai
+- `db_pass` file **exist** karni chahiye
+- File **read** karke password verify karo
+- `docker inspect` se secret **visible nahi** hona chahiye
+
+**Task 18: Swarm Cleanup Karna**
+- Testing ke baad **cleanup** karna hai
+- `docker stack rm myapp` (stack remove)
+- `docker swarm leave --force` (swarm leave)
+- System **normal mode** mein aa jayega
+
+**Task 19: Non-Swarm Alternative Setup Karna**
+- **Production** mein Swarm nahi use kar rahe toh **alternative** hai
+- Host machine par **secret file** banao
+- Compose mein **volume mount** karo: `./secrets/db_pass:/run/secrets/db_pass:ro`
+- **Read-only** mount karna zaroori hai
+
+#### Capability Dropping
+**Task 20: Capabilities Drop Karna**
+- Compose mein **`cap_drop: ALL`** add karna hai
+- Container ke paas **koi root capabilities nahi** hongi
+- **Maximum security** hai
+- Lekin app **break** ho sakti hai
+
+**Task 21: Specific Capabilities Add Karna**
+- Agar app ko **specific permission** chahiye, toh **selective add** karo
+- `cap_add: NET_BIND_SERVICE` (port 80/443 bind karne ke liye)
+- **Minimum required** capabilities hi do
+- Ye **principle of least privilege** hai
+
+**Task 22: Capabilities Test Karna**
+- Container run karke **verify** karo ki app **chal rahi** hai
+- **Unnecessary operations fail** hone chahiye
+- Security **hardened** hai
+- Production-ready **configuration** hai
+
+### 4. Definition of Done - Kaise Pata Chalega Success Hua?
+- Resource limits **enforce** ho rahe hain (OOM kill test pass)
+- **CMD Exec form** mein hai aur **signals handle** ho rahe hain (graceful shutdown)
+- Secrets **file se read** ho rahe hain, **env variable** mein nahi
+- Container ke paas **root capabilities nahi** hain (cap_drop working)
 
 ---
 
-## 🧩 Module 10: Advanced Debugging & Image Hardening (Linting, Scanning, Permissions)
+## 🔍 Module 10: Advanced Debugging & Image Hardening (Linting, Scanning, Permissions)
 
-### 1. The Concept
-CI/CD Integration, Vulnerability Management, aur Forensic Debugging.
+### 1. The Concept - Kya Seekhoge?
+Tum seekhoge ki **Dockerfile ko lint** kaise karte hain, **images ko security scan** kaise karte hain, **file permissions** kaise set karte hain, aur **crashed containers ko debug** kaise karte hain.
 
-### 2. Why & Learning Outcome (Real-World Scenario)
-*   **Kyun Zaroori Hai?** Production mein image push karne se pehle usse scan karna zaroori hai. Crashed containers se logs nikalna aana chahiye.
-*   **Learning:** Hadolint, Trivy, File Permissions, Crash Analysis.
-*   **Agar Nahi Kiya:** Vulnerable images production mein chali jayengi. Crash ka reason pata nahi chalega.
-*   **Problem Solved:** Secure Supply Chain aur Faster Mean Time To Resolution (MTTR).
+### 2. Why & Learning Outcome - Kyun Zaroori Hai?
+**Real Production Scenario 1:** Tumne image **production mein push** kar di. Next day **security team** ne alert diya - image mein **critical vulnerability** hai (CVE-2023-XXXX). Ab **emergency patching** karni padegi, **downtime** hoga.
 
-### 3. Practical Tasks
-#### Hadolint (Linting)
-1.  **Hadolint run karo apni Dockerfile par** – Docker se hadolint image use karo. Warnings dekho.
-2.  **Warnings fix karo** – jaise version pinning, multiple RUN ko combine karna, etc.
+**Real Production Scenario 2:** Container **crash** ho gaya production mein. Logs mein **kuch nahi** dikh raha. Container **already removed** ho gaya. Ab **root cause** pata nahi chal raha.
 
-#### Trivy (Image Scanning)
-3.  **Trivy se apni image scan karo** – `aquasec/trivy` image use karo.
-4.  **Vulnerabilities review karo** – CRITICAL, HIGH.
-5.  **Fix try karo** – base image change karo, dependencies update karo, phir rescan.
+**Real Production Scenario 3:** Dockerfile mein **bad practices** hain - **latest tag** use kiya, **secrets hardcoded** hain. Code review mein **reject** ho gaya.
+
+**Seekhoge:**
+- **Hadolint:** Dockerfile **best practices** check karna
+- **Trivy:** Image **vulnerabilities** scan karna
+- **File permissions:** **Secure permissions** set karna
+- **Crash debugging:** **Failed containers** se data nikalna
+
+**Agar ye nahi kiya:**
+- **Vulnerable images** production mein jayengi
+- **Crash analysis impossible** hoga
+- **Security audit fail** hoga
+
+### 3. Practical Tasks - Step by Step Kya Karna Hai
+
+#### Hadolint (Dockerfile Linting)
+**Task 1: Hadolint Run Karna**
+- **Hadolint** Docker image use karke Dockerfile **lint** karni hai
+- `docker run --rm -i hadolint/hadolint < Dockerfile`
+- **Warnings aur errors** dikhenge
+- Ye **CI/CD pipeline** mein integrate karna chahiye
+
+**Task 2: Hadolint Warnings Fix Karna**
+- **Version pinning:** `FROM python:3.9` ki jagah `FROM python:3.9.18`
+- **Multiple RUN combine:** Ek hi RUN mein multiple commands
+- **WORKDIR use:** `cd` ki jagah `WORKDIR`
+- **Latest tag avoid:** Specific version use karo
+
+**Task 3: Clean Dockerfile Verify Karna**
+- Hadolint **phir se run** karo
+- **No warnings** aane chahiye (ya acceptable warnings)
+- Ye **production-ready** Dockerfile hai
+- **Code review** mein pass hoga
+
+#### Trivy (Image Vulnerability Scanning)
+**Task 4: Trivy Se Image Scan Karna**
+- **Trivy** Docker image use karke apni image **scan** karni hai
+- `docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image my-app:v1`
+- **Vulnerabilities list** dikhegi
+- **Severity levels:** CRITICAL, HIGH, MEDIUM, LOW
+
+**Task 5: Vulnerabilities Review Karna**
+- **CRITICAL aur HIGH** vulnerabilities ko **priority** do
+- **CVE numbers** note karo
+- **Affected packages** identify karo
+- **Fix available** hai ya nahi check karo
+
+**Task 6: Vulnerabilities Fix Karna**
+- **Base image update** karo (newer version mein fix ho sakta hai)
+- **Dependencies update** karo (`pip install --upgrade`, `npm update`)
+- **Alternative packages** use karo (agar fix nahi hai)
+- Image **rebuild** karo
+
+**Task 7: Rescan Karna**
+- Fixed image ko **phir se scan** karo
+- **Vulnerabilities reduce** hone chahiye
+- **Zero critical** vulnerabilities target hai
+- Ye **continuous process** hai
 
 #### File Permissions
-6.  **Dockerfile mein COPY ke saath `--chown` aur `--chmod` use karo** – sensitive files ke liye 640, executable ke liye 755.
-7.  **Build karo aur verify** – container mein jaake permissions check karo.
+**Task 8: Dockerfile Mein Permissions Set Karna**
+- **COPY instruction** mein **`--chmod`** flag use karna hai
+- Sensitive files: `COPY --chmod=640 config.yml /app/`
+- Executable files: `COPY --chmod=755 entrypoint.sh /app/`
+- **Secure by default** approach
+
+**Task 9: Chown Aur Chmod Combine Karna**
+- **Dono flags** ek saath use kar sakte ho
+- `COPY --chown=appuser:appuser --chmod=640 secret.key /app/`
+- **One-step** secure copy
+- **Best practice** hai
+
+**Task 10: Permissions Verify Karna**
+- Container ke **andar** jaake permissions check karni hain
+- `ls -la /app/` command run karo
+- **Expected permissions** dikhne chahiye
+- **Security audit** pass hoga
 
 #### Debugging Crashed Containers
-8.  **Ek container run karo jo turant exit kare** (e.g., `alpine sh -c "exit 1"`).
-9.  **Exit code check karo** – `docker ps -a` aur `docker inspect`.
-10. **Logs dekho** – `docker logs`.
-11. **Crashed container se files copy karo** – `docker cp` ya `--volumes-from` use karke.
-12. **Kisi running container mein exec karo** – `docker exec -it` se interactive shell lo.
+**Task 11: Crash Container Create Karna**
+- Ek container **intentionally crash** karna hai
+- `docker run --name crash-test alpine sh -c "exit 1"`
+- Container **immediately exit** ho jayega
+- Ye **real crash** simulate karta hai
 
-### 4. Definition of Done
-*   Hadolint warnings fix ho gayi (ya known warnings acceptable hain).
-*   Trivy scan mein critical vulnerabilities nahi hain (ya mitigated).
-*   File permissions inside container correct hain.
-*   Crashed container se logs aur files retrieve kar liye.
-*   Running container mein exec karke debugging kar liya.
+**Task 12: Exit Code Check Karna**
+- `docker ps -a` se **exit code** dekhna hai
+- **Exit code 1** dikhega (error)
+- Different exit codes **different errors** indicate karte hain
+- **Exit code 0** = success, **non-zero** = error
+
+**Task 13: Inspect Se Details Nikalna**
+- `docker inspect crash-test` run karni hai
+- **State.ExitCode** dekhna hai
+- **State.Error** message dekhna hai
+- **Complete crash info** milti hai
+
+**Task 14: Logs Retrieve Karna**
+- `docker logs crash-test` run karni hai
+- **Crash se pehle** ke logs dikhenge
+- **Error messages** identify karo
+- Ye **primary debugging** method hai
+
+**Task 15: Crashed Container Se Files Copy Karna**
+- Container **stopped** hai lekin **files accessible** hain
+- `docker cp crash-test:/app/error.log ./` (file copy)
+- **Crash dumps, logs** extract kar sakte ho
+- **Forensic analysis** ke liye useful
+
+**Task 16: Volumes-From Use Karna**
+- Agar crashed container mein **volume** tha, toh **data access** kar sakte ho
+- `docker run --rm --volumes-from crash-test alpine ls /data`
+- **Data recovery** possible hai
+- **Backup** nahi tha toh ye **lifesaver** hai
+
+**Task 17: Running Container Mein Exec Karna**
+- **Live debugging** ke liye container mein **shell** lena hai
+- `docker exec -it <container> sh` (Alpine) ya `bash` (Debian)
+- **Interactive debugging** kar sakte ho
+- **Processes, files, network** check kar sakte ho
+
+**Task 18: Exec Se Troubleshooting Karna**
+- Container ke andar **diagnostic commands** run karo
+- `ps aux` (running processes)
+- `netstat -tulpn` (network connections)
+- `df -h` (disk usage)
+- **Live system** inspect kar sakte ho
+
+### 4. Definition of Done - Kaise Pata Chalega Success Hua?
+- **Hadolint warnings fix** ho gayi (ya acceptable hain)
+- **Trivy scan** mein **critical vulnerabilities nahi** hain (ya mitigated)
+- **File permissions** inside container **correct** hain (security compliant)
+- **Crashed container** se **logs aur files retrieve** kar liye
+- **Running container** mein **exec karke debugging** kar liya
 
 ---
 
-## ✅ Final Confirmation from Senior DevOps
 
-Maine **3 baar audit kiya hai**.
-1.  **Original Prompt Constraints:** Sab follow huye (No K8s, Docker Engine/Compose only).
-2.  **Missing Links:** Security, Optimization, Reliability, Debugging, Best Practices, Networking, Signals – Sab cover huye.
-3.  **Production Gaps:** Log Rotation, Backup, Registry, Multi-arch, Overrides, Cap Drop, Timezone, Workdir, Entrypoint, Health Dependencies – Sab integrate huye.
-4.  **New Requirement:** Har module mein **"Why & Learning Outcome"** section add kiya gaya hai jo real-world problem solve karta hai.
-
-Ab ye roadmap **100% Complete** hai. Isme se kuch bhi miss nahi hua hai.
-
-**Task:**
-**Module 1** se start karo. Jaise hi tumhare saare steps complete ho jayein aur Definition of Done verify ho jaye, reply karo: **"Module 1 Done"**.
-
-**All the best! Phod ke dikhao.** 🚀🐳
