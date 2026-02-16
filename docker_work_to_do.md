@@ -28,38 +28,34 @@ Container lifecycle management (Pull, Run, Stop, Start, Remove) aur flags ka sah
 *   `docker diff` se file changes detect kar paaye.
 
 ---
-
-## 🧩 Module 2: The Builder (Custom Images, Tagging & Registry)
-
-### 1. The Concept
+## 🧩 Module 2: The Builder (Custom Images, Tagging & Registry) [UPDATED]
+1. The Concept
 Custom Docker images banana, optimize karna, aur Remote Registry par manage karna.
-
-### 2. Why & Learning Outcome (Real-World Scenario)
-*   **Kyun Zaroori Hai?** Company ka code private hota hai. Hum hamesha public images use nahi kar sakte. Images ko version karna zaroori hai taaki pata chale kaunsa code deploy hua hai.
-*   **Learning:** `Dockerfile` best practices, `WORKDIR`, `ENTRYPOINT` vs `CMD`, aur Semantic Versioning.
-*   **Agar Nahi Kiya:** `latest` tag use karoge toh production mein purana code chalne ka risk rahega. Bina `.dockerignore` ke image size bada ho jayega.
-*   **Problem Solved:** Reproducible builds aur secure code distribution.
-
-### 3. Practical Tasks
-1.  **Project folder banayein** – `my-app` naam se.
-2.  **Ek simple web application likhein** – Python (Flask) ya Node.js (Express) mein. Ye "Hello Docker" return kare.
-3.  **`.dockerignore` file banayein** – usme `node_modules` (ya `__pycache__`), `.git`, `.env`, aur aise files jo image mein nahi jaani chahiye.
-4.  **Dockerfile likhein** – base image ke liye Alpine version use karo.
-5.  **WORKDIR set karo** – `WORKDIR` instruction ka use karo, `cd` command ka nahi.
-6.  **ENTRYPOINT vs CMD** – Dockerfile mein `ENTRYPOINT` aur `CMD` ka sahi combination use karo taaki container flexible rahe.
-7.  **Image build karo** – tag do `my-app:v1`.
-8.  **Container run karo** – port mapping ke saath, aur check karo ki app sahi chal rahi hai.
-9.  **Image layers inspect karo** – `docker history` se dekho ki har layer ka size kya hai.
-10. **Semantic Versioning Apply karo** – Image ko `latest` ki jagah specific version (e.g., `v1.0.0`) aur commit hash ke saath tag karo.
-11. **Registry Push karo** – Docker Hub ya GitHub Container Registry par login karo aur apni image ko push karo.
-12. **Verify Remote Image** – Browser se registry par jakar verify karo ki image upload hui hai.
-
-### 4. Definition of Done
-*   Build successful ho.
-*   Container run karke output dikhe.
-*   `.dockerignore` ki vajah se unwanted files image mein nahi gayi.
-*   Image remote registry par visible ho aur tag mein version number ho.
-*   `WORKDIR` sahi se set hai aur `ENTRYPOINT/CMD` logic sahi hai.
+2. Why & Learning Outcome (Real-World Scenario)
+Kyun Zaroori Hai? Company ka code private hota hai. Images ko version karna zaroori hai taaki pata chale kaunsa code deploy hua hai.
+Learning: Dockerfile best practices (COPY vs ADD, ARG vs ENV, Exec vs Shell form).
+Agar Nahi Kiya: ADD use karne se security risk ho sakta hai. ENV mein password dalne se wo leak ho sakta hai. Shell form use karne se signals handle nahi honge.
+Problem Solved: Secure aur reproducible builds.
+3. Practical Tasks
+Project folder banayein – my-app naam se.
+Ek simple web application likhein – Python (Flask) ya Node.js (Express) mein. Ye "Hello Docker" return kare.
+.dockerignore file banayein – usme node_modules, .git, .env add karo.
+Dockerfile likhein – base image ke liye Alpine version use karo.
+COPY vs ADD – Files copy karne ke liye hamesha COPY instruction use karo, ADD nahi (jab tak tar extract na karna ho).
+ARG vs ENV – Build time variables ke liye ARG use karo, runtime ke liye ENV. Sensitive data (password) ko ARG mein bhi mat dalna agar image public hai.
+WORKDIR set karo – WORKDIR instruction ka use karo, cd command ka nahi.
+ENTRYPOINT vs CMD (Exec Form) – Dockerfile mein ENTRYPOINT aur CMD ko hamesha Exec Form (["command", "param"]) mein likho, Shell form (command param) mein nahi. Ye PID 1 aur signals ke liye zaroori hai.
+Image build karo – tag do my-app:v1.
+Container run karo – port mapping ke saath, aur check karo ki app sahi chal rahi hai.
+Image layers inspect karo – docker history se dekho ki har layer ka size kya hai.
+Semantic Versioning Apply karo – Image ko latest ki jagah specific version (e.g., v1.0.0) aur commit hash ke saath tag karo.
+Registry Push karo – Docker Hub ya GitHub Container Registry par login karo aur apni image ko push karo.
+Verify Remote Image – Browser se registry par jakar verify karo ki image upload hui hai.
+4. Definition of Done
+Build successful ho.
+COPY use hua hai ADD ki jagah.
+CMD/ENTRYPOINT Exec Form ([]) mein hai.
+Image remote registry par visible ho aur tag mein version number ho.
 
 ---
 
@@ -163,33 +159,29 @@ Multi-container applications define karna aur Environment Management.
 *   `.env` file se variables load ho rahe hain.
 
 ---
-
-## 🧩 Module 6: The Optimizer (Production Grade Builds & Multi-Arch)
-
-### 1. The Concept
+## 🧩 Module 6: The Optimizer (Production Grade Builds & Multi-Arch) [UPDATED]
+1. The Concept
 Image size reduction, Build Speed, aur Cross-Platform Compatibility.
-
-### 2. Why & Learning Outcome (Real-World Scenario)
-*   **Kyun Zaroori Hai?** Badi images deploy hone mein time leti hain aur security risks badhati hain. Agar tumhara laptop M1 hai aur server Linux hai, toh normal build fail ho sakta hai.
-*   **Learning:** Multi-stage builds, Layer Caching, Distroless, Docker Buildx.
-*   **Agar Nahi Kiya:** Deployment slow hoga, security vulnerabilities badhenge, architecture mismatch ayega.
-*   **Problem Solved:** Faster CI/CD pipelines aur secure, portable images.
-
-### 3. Practical Tasks
-1.  **Current image size check karo** – `my-app:v1` ka size dekho.
-2.  **Multi-stage Dockerfile likho** – Stage 1 (builder) mein dependencies install karo, Stage 2 (final) mein sirf built artifacts copy karo, aur chhoti base image (alpine ya distroless) use karo.
-3.  **Nayi image build karo** – tag `my-app:optimized`.
-4.  **Size compare karo** – purani aur nayi image ka size.
-5.  **Layer caching optimize karo** – Dockerfile mein pehle sirf dependency files copy karo, phir `RUN` install, phir baaki code copy karo. Build karo aur dekho ki jab code change ho to dependency layer cache se reuse hoti hai.
-6.  **(Advanced) Distroless image use karo** – final stage ko `gcr.io/distroless/python3` se replace karo. Build karo aur run karo.
-7.  **Multi-Architecture Build karo** – `docker buildx` ka use karke image ko `linux/amd64` aur `linux/arm64` dono ke liye build karo.
-8.  **Push Multi-arch Image** – Is image ko registry par push karo aur verify karo ki manifest list create hua hai.
-
-### 4. Definition of Done
-*   Image size noticeably reduced.
-*   Multi-stage build successful.
-*   Distroless image (optional) chal raha hai.
-*   Image alag-alag architecture (Mac vs Linux) par bina error ke run ho rahi hai.
+2. Why & Learning Outcome (Real-World Scenario)
+Kyun Zaroori Hai? Badi images deploy hone mein time leti hain. Agar tumhara laptop M1 hai aur server Linux hai, toh normal build fail ho sakta hai.
+Learning: Multi-stage builds, BuildKit, Layer Caching, Docker Buildx.
+Agar Nahi Kiya: Deployment slow hoga, architecture mismatch ayega.
+Problem Solved: Faster CI/CD pipelines aur portable images.
+3. Practical Tasks
+BuildKit Enable karo – Build shuru karne se pehle export DOCKER_BUILDKIT=1 set karo taaki advanced caching features use kar sako.
+Current image size check karo – my-app:v1 ka size dekho.
+Multi-stage Dockerfile likho – Stage 1 (builder) mein dependencies install karo, Stage 2 (final) mein sirf built artifacts copy karo, aur chhoti base image (alpine ya distroless) use karo.
+Nayi image build karo – tag my-app:optimized.
+Size compare karo – purani aur nayi image ka size.
+Layer caching optimize karo – Dockerfile mein pehle sirf dependency files copy karo, phir RUN install, phir baaki code copy karo.
+(Advanced) Distroless image use karo – final stage ko gcr.io/distroless/python3 se replace karo. Build karo aur run karo.
+Multi-Architecture Build karo – docker buildx ka use karke image ko linux/amd64 aur linux/arm64 dono ke liye build karo.
+Push Multi-arch Image – Is image ko registry par push karo aur verify karo ki manifest list create hua hai.
+4. Definition of Done
+Image size noticeably reduced.
+BuildKit enable tha build ke waqt.
+Multi-stage build successful.
+Image alag-alag architecture (Mac vs Linux) par bina error ke run ho rahi hai.
 
 ---
 
@@ -255,52 +247,45 @@ Reliability, Observability, aur Maintenance.
 
 ---
 
-## 🧩 Module 9: Production Hardening (Limits, Signals, Secrets & Capabilities)
-
-### 1. The Concept
+## 🧩 Module 9: Production Hardening (Limits, Signals, Secrets & Capabilities) [UPDATED]
+1. The Concept
 Resource Governance, Graceful Shutdowns, aur Advanced Security.
-
-### 2. Why & Learning Outcome (Real-World Scenario)
-*   **Kyun Zaroori Hai?** Ek buggy service pure server ki RAM kha sakti hai. abrupt stop se data corrupt ho sakta hai. Secrets code mein nahi hone chahiye.
-*   **Learning:** CPU/RAM Limits, SIGTERM handling, Secrets Management, Linux Capabilities.
-*   **Agar Nahi Kiya:** Server OOM (Out of Memory) hoga. Data loss hoga. Passwords leak honge.
-*   **Problem Solved:** Stability, Data Integrity, aur Security Compliance.
-
-### 3. Practical Tasks
-#### Resource Limits
-1.  **Container run karo with memory limit** – `--memory="256m"` aur `--cpus="0.5"`.
-2.  **Container ke andar stress test karo** – memory 300MB allocate karne ki koshish karo. Container OOM kill hona chahiye.
-3.  **Stats check karo** – `docker stats` se limit ke andar usage dikhna chahiye.
-4.  **Compose mein limits define karo** – `deploy.resources` section mein.
-
-#### Signal Handling & PID 1
-5.  **App code mein SIGTERM handler add karo** – graceful shutdown ka message print karo.
-6.  **Image build karo** – `my-app:signals`.
-7.  **Container run karo without `--init`** – `docker stop` karo aur dekho ki graceful shutdown message aata hai ya nahi.
-8.  **Container run karo with `--init`** – `docker stop` karo, ab message aana chahiye.
-9.  **Compose mein `init: true` add karo** aur test karo.
-10. **Stop Grace Period** – Compose mein `stop_grace_period` set karo aur test karo ki container ko shutdown ke liye kitna time mil raha hai.
-
-#### Secrets Management
-11. **Docker Swarm initialize karo** (temporary) – `docker swarm init`.
-12. **Secret create karo** – `echo "password" | docker secret create db_pass -`.
-13. **Compose file (v3.8+) likho** jo secret ko service mein mount kare. Environment variable mein file path pass karo.
-14. **App code mein file se password read karo**.
-15. **Stack deploy karo** – `docker stack deploy -c docker-compose.yml myapp`.
-16. **Verify karo** – container mein `/run/secrets/db_pass` file exist karti hai.
-17. **Swarm clean up** – stack remove karo, swarm leave karo.
-18. **Non‑Swarm alternative** – host par secret file banao, compose mein volume mount karo as read-only.
-
-#### Capability Dropping (Advanced Security)
-19. **Drop Capabilities** – Compose ya run command mein `cap_drop: ALL` use karo.
-20. **Add Specific Caps** – Agar app ko network access chahiye toh sirf `NET_BIND_SERVICE` add karo.
-
-### 4. Definition of Done
-*   Resource limits enforce hote hain (OOM kill).
-*   `--init` ke saath graceful shutdown ka message aata hai.
-*   Secrets file se read hote hain, env variable mein nahi.
-*   Container ke paas root capabilities nahi hain (cap_drop working).
-*   `stop_grace_period` sahi se work kar raha hai.
+2. Why & Learning Outcome (Real-World Scenario)
+Kyun Zaroori Hai? Ek buggy service pure server ki RAM kha sakti hai. abrupt stop se data corrupt ho sakta hai.
+Learning: CPU/RAM Limits, SIGTERM handling (Exec Form), Secrets Management, Linux Capabilities.
+Agar Nahi Kiya: Server OOM hoga. Data loss hoga.
+Problem Solved: Stability aur Data Integrity.
+3. Practical Tasks
+Resource Limits
+Container run karo with memory limit – --memory="256m" aur --cpus="0.5".
+Container ke andar stress test karo – memory 300MB allocate karne ki koshish karo. Container OOM kill hona chahiye.
+Stats check karo – docker stats se limit ke andar usage dikhna chahiye.
+Compose mein limits define karo – deploy.resources section mein.
+Signal Handling & PID 1
+App code mein SIGTERM handler add karo – graceful shutdown ka message print karo.
+Image build karo – my-app:signals.
+Verify Exec Form – Ensure karo ki Dockerfile mein CMD Exec Form (["python", "app.py"]) mein hai.
+Container run karo without --init – docker stop karo aur dekho ki graceful shutdown message aata hai ya nahi (Exec form mein aana chahiye).
+Container run karo with --init – docker stop karo, ab message aana chahiye (aur zyada reliable hoga).
+Compose mein init: true add karo aur test karo.
+Stop Grace Period – Compose mein stop_grace_period set karo aur test karo ki container ko shutdown ke liye kitna time mil raha hai.
+Secrets Management
+Docker Swarm initialize karo (temporary) – docker swarm init.
+Secret create karo – echo "password" | docker secret create db_pass -.
+Compose file (v3.8+) likho jo secret ko service mein mount kare.
+App code mein file se password read karo.
+Stack deploy karo – docker stack deploy -c docker-compose.yml myapp.
+Verify karo – container mein /run/secrets/db_pass file exist karti hai.
+Swarm clean up – stack remove karo, swarm leave karo.
+Non‑Swarm alternative – host par secret file banao, compose mein volume mount karo as read-only.
+Capability Dropping (Advanced Security)
+Drop Capabilities – Compose ya run command mein cap_drop: ALL use karo.
+Add Specific Caps – Agar app ko network access chahiye toh sirf NET_BIND_SERVICE add karo.
+4. Definition of Done
+Resource limits enforce hote hain (OOM kill).
+CMD Exec Form mein hai aur signals handle ho rahe hain.
+Secrets file se read hote hain, env variable mein nahi.
+Container ke paas root capabilities nahi hain (cap_drop working).
 
 ---
 
