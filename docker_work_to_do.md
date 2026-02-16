@@ -27,7 +27,7 @@ Container lifecycle management (Pull, Run, Stop, Start, Remove) aur flags ka sah
 *   `--rm` wala container stop/exit karne ke baad `docker ps -a` mein nahi dikhna chahiye.
 *   `docker diff` se file changes detect kar paaye.
 
----
+----======Done upto above=========
 ## 🧩 Module 2: The Builder (Custom Images, Tagging & Registry) [UPDATED]
 1. The Concept
 Custom Docker images banana, optimize karna, aur Remote Registry par manage karna.
