@@ -61,86 +61,265 @@ Image remote registry par visible ho aur tag mein version number ho.
 
 ## 🧩 Module 3: The Data Manager (Persistence & Backup)
 
-### 1. The Concept
-Data persistence using Volumes/Bind Mounts aur Disaster Recovery (Backup/Restore).
+### 1. The Concept - Kya Seekhoge?
+Tum seekhoge ki **container ka data permanently kaise save** karte hain (Volumes/Bind Mounts use karke) aur **disaster recovery** kaise karte hain (Backup aur Restore strategy).
 
-### 2. Why & Learning Outcome (Real-World Scenario)
-*   **Kyun Zaroori Hai?** Containers ephemeral (temporary) hote hain. Agar container delete hua aur volume nahi tha, toh database ka saara data udd jayega.
-*   **Learning:** Bind Mount vs Named Volume, aur Volume Backup/Restore strategy.
-*   **Agar Nahi Kiya:** Production database crash hua toh permanent data loss hoga.
-*   **Problem Solved:** Data durability aur Disaster Recovery.
+### 2. Why & Learning Outcome - Kyun Zaroori Hai?
+**Real Production Scenario:** Containers **temporary** hote hain - matlab jab container delete hota hai, uska **saara data bhi delete** ho jata hai. Agar tumhara **database container** crash ho gaya aur **volume nahi tha**, toh **saara customer data permanently loss** ho jayega.
 
-### 3. Practical Tasks
+**Seekhoge:**
+- **Bind Mount:** Development ke liye - jab tumhe **live code changes** dekhne hain
+- **Named Volume:** Production databases ke liye - **permanent storage**
+- **Backup/Restore:** Disaster se bachne ke liye - **data recovery strategy**
+
+**Agar ye nahi kiya:** Production mein database crash hua toh **company ka saara data kho jayega** - ye **career-ending mistake** ho sakti hai.
+
+### 3. Practical Tasks - Step by Step Kya Karna Hai
+
 #### Bind Mount (Dev Mode)
-1.  **Bind mount ke saath container run karo** – host ke current directory ko container ke `/app` (ya jahan code hai) se map karo.
-2.  **Code change karo** – "Hello Docker" message change karo.
-3.  **Verify karo** – browser refresh karo ya container restart karo. Change reflect hona chahiye.
+**Task 1: Bind Mount Ke Saath Container Chalana**
+- Tumhe apne **laptop/PC ki current directory** ko container ke **andar ek folder** se **connect** karna hai
+- Ye **real-time sync** hota hai - **host pe change karo**, container mein **turant reflect** hoga
+- Container ke **andar `/app` folder** (ya jahan tumhara code hai) ko **host directory se map** karna hai
+- Ye **development ke liye perfect** hai kyunki **code edit karke turant test** kar sakte ho
+
+**Task 2: Live Code Change Test Karna**
+- Apne **code editor** mein file open karo
+- **"Hello Docker" message** ko kuch aur mein **change** karo (jaise "Hello World Modified")
+- File **save** karo
+
+**Task 3: Change Verify Karna**
+- **Browser refresh** karo ya container **restart** karo
+- Tumhe **naya message** dikhna chahiye
+- Ye **prove** karta hai ki **host aur container** ke beech **live connection** hai
 
 #### Named Volume (Database)
-4.  **Volume create karo** – naam `mysql-data`.
-5.  **MySQL container run karo** – image `mysql:8.0`, volume ko `/var/lib/mysql` par mount karo, environment variable `MYSQL_ROOT_PASSWORD` set karo.
-6.  **Container mein jaake database aur table banayein** – kuch data insert karo.
-7.  **Container delete karo** (force).
-8.  **Naya container run karo** – same volume ke saath.
-9.  **Data check karo** – pehle wala data exist karna chahiye.
+**Task 4: Named Volume Create Karna**
+- Docker mein ek **special storage area** banana hai
+- Iska naam **`mysql-data`** rakhna hai
+- Ye **container se independent** hota hai - container delete ho jaye, **volume safe** rahega
+
+**Task 5: MySQL Container Volume Ke Saath Run Karna**
+- **MySQL 8.0 image** use karni hai
+- Volume ko MySQL ke **data directory** (`/var/lib/mysql`) se **attach** karna hai
+- **Root password** set karna hai environment variable se
+- Ab MySQL ka **saara data** is volume mein **save** hoga
+
+**Task 6: Database Mein Data Dalna**
+- Container ke **andar MySQL client** se **connect** karna hai
+- Ek **database** banana hai (jaise `testdb`)
+- Ek **table** banana hai (jaise `users`)
+- Kuch **sample data insert** karna hai (2-3 rows)
+
+**Task 7: Container Ko Force Delete Karna**
+- Container ko **forcefully remove** karna hai
+- Normally ye **data loss** ka reason hota hai
+- Lekin **volume hai**, toh data **safe** rahega
+
+**Task 8: Same Volume Ke Saath Naya Container Start Karna**
+- **Bilkul naya container** start karna hai
+- Lekin **same volume attach** karna hai
+- Ye **production scenario** simulate karta hai jab container **crash** hoke **restart** hota hai
+
+**Task 9: Data Persistence Verify Karna**
+- Naye container mein **MySQL client** se connect karo
+- **Database list** dekho - `testdb` **exist** karna chahiye
+- **Table query** karo - tumhara **purana data** wapas **mil jayega**
+- Ye **proof** hai ki data **persistent** hai
 
 #### Backup & Restore (Critical)
-10. **Volume Backup lo** – Running container se attached volume ka `.tar` backup file host machine par banao.
-11. **Volume Delete karo** – Original volume ko remove karo.
-12. **Restore karo** – Naya volume banao aur backup file se data usme restore karo.
-13. **Verify Restore** – Naye container ke saath check karo ki purana data wapas aa gaya hai.
+**Task 10: Volume Ka Backup Lena**
+- Ek **temporary container** start karna hai jo **volume ko mount** kare
+- Volume ke **saare contents** ko ek **`.tar` file** mein **compress** karna hai
+- Ye **tar file** tumhare **host machine** par save hogi
+- Ye **production backup strategy** hai
 
-### 4. Definition of Done
-*   Bind mount mein code change reflect hua.
-*   Volume delete ke baad bhi data safe raha.
-*   Backup file bani aur restore karne par data wapas aa gaya.
+**Task 11: Original Volume Delete Karna**
+- **Disaster simulation** ke liye original volume ko **permanently remove** karna hai
+- Normally ye **panic situation** hoti hai
+- Lekin tumhare paas **backup** hai
+
+**Task 12: Backup Se Data Restore Karna**
+- **Naya volume** create karna hai
+- **Backup tar file** se data ko **extract** karke **naye volume** mein dalna hai
+- Ye **disaster recovery process** hai
+
+**Task 13: Restore Verify Karna**
+- Naye volume ke saath **fresh container** start karo
+- MySQL mein **login** karo
+- **Database aur table** check karo
+- **Saara purana data** wapas aa gaya hona chahiye
+- Ye **successful disaster recovery** hai
+
+### 4. Definition of Done - Kaise Pata Chalega Success Hua?
+- **Bind mount** mein code change **instantly reflect** hua
+- **Volume delete** ke baad bhi data **safe** raha (persistence verified)
+- **Backup file successfully** bani aur **restore** karne par **complete data recovery** hui
 
 ---
 
 ## 🧩 Module 4: The Network Engineer (Communication)
 
-### 1. The Concept
-Container networking, DNS resolution, aur Service Discovery.
+### 1. The Concept - Kya Seekhoge?
+Tum seekhoge ki **containers ek dusre se kaise communicate** karte hain, **DNS resolution** kaise kaam karta hai, aur **service discovery** kya hoti hai (containers ko **naam se** kaise dhundhe).
 
-### 2. Why & Learning Outcome (Real-World Scenario)
-*   **Kyun Zaroori Hai?** Microservices ek dusre se baat karte hain. IP addresses dynamic hote hain, humesha change hote rehte hain. Hardcoded IP kabhi use nahi karna chahiye.
-*   **Learning:** Custom Bridge Networks, DNS Resolution, Network Aliases.
-*   **Agar Nahi Kiya:** Agar database ka IP change hua toh application crash ho jayegi.
-*   **Problem Solved:** Reliable service-to-service communication.
+### 2. Why & Learning Outcome - Kyun Zaroori Hai?
+**Real Production Scenario:** Modern applications **microservices** hote hain - **frontend, backend, database, cache** sab **alag containers** mein chalte hain. Inhe **ek dusre se baat** karni padti hai. Lekin **IP addresses dynamic** hote hain - **container restart** hone par **IP change** ho jata hai.
 
-### 3. Practical Tasks
-1.  **Custom bridge network create karo** – naam `my-net`.
-2.  **Redis container run karo** – is network mein, container naam `redis-cache`.
-3.  **Apne application mein Redis client add karo** – code mein Redis se connect karne ka logic, hostname `redis-cache` use karo. Image build karo `my-app:v2`.
-4.  **App container run karo** – same network mein.
-5.  **Logs check karo** – app successfully Redis se connect ho raha hai ya nahi.
-6.  **Network inspect karo** – dono containers ka IP address dekho.
-7.  **App container se Redis container ko ping karo** – `ping redis-cache` (container ke andar se) – successful hona chahiye.
-8.  **Network Aliases** – Network create karte waqt alias ka use karo aur verify karo ki alias se bhi connect ho raha hai.
-9.  **External Network** – Ek existing network ko compose file mein `external: true` declare karke connect karne ka try karo.
+**Problem:** Agar tumne code mein **IP address hardcode** kar diya (jaise `192.168.1.5`), aur wo container **restart** hua, toh **naya IP** mil jayega aur tumhara **app crash** ho jayega.
 
-### 4. Definition of Done
-*   App Redis se bina IP hardcode kiye connect hua.
-*   Ping successful.
-*   Network alias se bhi resolution ho raha hai.
+**Solution:** Docker **automatic DNS** provide karta hai - tum **container name** use kar sakte ho (jaise `redis-cache`), aur Docker **automatically IP resolve** kar dega.
+
+**Agar ye nahi kiya:** Production mein **database restart** hua toh **saari services crash** ho jayengi kyunki **IP change** ho gaya.
+
+### 3. Practical Tasks - Step by Step Kya Karna Hai
+
+**Task 1: Custom Bridge Network Banana**
+- Docker mein ek **isolated network** create karna hai
+- Naam **`my-net`** rakhna hai
+- Ye **private network** hoga jisme sirf **tumhare containers** honge
+- **Default bridge** se better hai kyunki **automatic DNS** milta hai
+
+**Task 2: Redis Container Network Mein Run Karna**
+- **Redis** (in-memory cache/database) container start karna hai
+- Use **`my-net` network** mein run karna hai
+- Container ka naam **`redis-cache`** rakhna hai
+- Ye naam hi **hostname** ban jayega (DNS ke liye)
+
+**Task 3: Application Mein Redis Client Add Karna**
+- Apne **Python/Node.js app** mein **Redis client library** install karna hai
+- Code mein **Redis se connect** karne ka logic likhna hai
+- **Important:** Connection string mein **IP nahi**, **hostname** use karo: **`redis-cache`**
+- Dockerfile update karke **naya image build** karo: **`my-app:v2`**
+
+**Task 4: App Container Same Network Mein Run Karna**
+- Apni app ka container **start** karna hai
+- **Same network** (`my-net`) mein run karna hai
+- Ab **dono containers** (app aur Redis) **same network** mein hain
+
+**Task 5: Connection Logs Verify Karna**
+- App container ke **logs** dekhne hain
+- Logs mein **"Connected to Redis"** ya similar message **dikhna** chahiye
+- Agar **error** hai toh **connection fail** hua
+
+**Task 6: Network Details Inspect Karna**
+- Network ko **inspect** karne se **details** milti hain
+- Tumhe **dono containers ke IP addresses** dikhenge
+- Ye **educational** hai - samajhne ke liye ki **internally kya ho raha** hai
+
+**Task 7: Container Se Container Ko Ping Karna**
+- App container ke **andar shell** open karna hai
+- Usme se **`redis-cache`** ko **ping** karna hai (hostname se)
+- Ping **successful** hona chahiye
+- Ye **prove** karta hai ki **DNS resolution** kaam kar raha hai
+
+**Task 8: Network Aliases Test Karna**
+- Container ko **multiple names** (aliases) de sakte ho
+- Network create karte waqt **alias** add karo
+- Verify karo ki **alias se bhi** connect ho raha hai
+- Ye **flexibility** deta hai - ek service ko **multiple names** se access karo
+
+**Task 9: External Network Use Karna**
+- Pehle se **existing network** ko compose file mein **reference** karna hai
+- `external: true` flag use karna hai
+- Ye **production scenario** hai jab **shared network** use karte hain
+
+### 4. Definition of Done - Kaise Pata Chalega Success Hua?
+- App **Redis se successfully connect** hua **bina IP hardcode** kiye (hostname se)
+- **Ping successful** raha (DNS working)
+- **Network alias** se bhi resolution ho raha hai (flexibility verified)
 
 ---
 
 ## 🧩 Module 5: The Orchestrator (Compose & Overrides)
 
-### 1. The Concept
-Multi-container applications define karna aur Environment Management.
+### 1. The Concept - Kya Seekhoge?
+Tum seekhoge ki **multiple containers** ko ek saath kaise manage karte hain (**Docker Compose** use karke) aur **different environments** (Dev, Staging, Production) ke liye **alag-alag configurations** kaise maintain karte hain.
 
-### 2. Why & Learning Outcome (Real-World Scenario)
-*   **Kyun Zaroori Hai?** Production mein 10-20 containers hote hain. Unhe ek-ek karke run karna impossible hai. Dev aur Prod config alag hoti hai.
-*   **Learning:** Docker Compose, `.env` files, Overrides, Profiles.
-*   **Agar Nahi Kiya:** Manual deployment mein human error hoga. Dev config production mein chali jayegi (security risk).
-*   **Problem Solved:** Consistent deployment across environments.
+### 2. Why & Learning Outcome - Kyun Zaroori Hai?
+**Real Production Scenario:** Real applications mein **10-20 containers** hote hain - **frontend, backend, database, cache, message queue, monitoring** sab alag. Inhe **manually ek-ek karke** run karna **impossible** hai aur **error-prone** bhi.
 
-### 3. Practical Tasks
-1.  **Project folder mein `docker-compose.yml` banayein** – version 3.8.
-2.  **Define services** – `redis` (image: redis:alpine) aur `app` (build: .). `app` ke liye ports expose karo, environment variable `REDIS_HOST=redis-cache` do.
-3.  **Healthcheck Dependency** – `depends_on` mein `condition: service_healthy` use karo taaki app tab start ho jab Redis ready ho.
+**Problem 1:** Har container ke liye **alag command** yaad rakhna aur **sahi order** mein run karna
+**Problem 2:** **Development** mein alag settings chahiye (debug mode, local ports), **Production** mein alag (security, resource limits)
+
+**Solution:** Docker Compose - ek **YAML file** mein **saari services define** karo, aur **ek command** se sab kuch **start/stop** karo.
+
+**Agar ye nahi kiya:** 
+- **Manual deployment** mein **human error** hoga (koi container bhool gaye)
+- **Dev config** production mein chali jayegi (**security risk** - debug ports open rahenge)
+
+### 3. Practical Tasks - Step by Step Kya Karna Hai
+
+**Task 1: Docker Compose File Banana**
+- Project folder mein **`docker-compose.yml`** file create karni hai
+- **Version 3.8** specify karna hai (latest stable)
+- Ye file **blueprint** hai - isme **saari services** define hongi
+
+**Task 2: Services Define Karna**
+- **Redis service:** Ready-made image use karo (`redis:alpine`)
+- **App service:** Tumhari custom image build hogi (Dockerfile se)
+- **Ports expose** karo (jaise 8080:5000)
+- **Environment variables** set karo (`REDIS_HOST=redis-cache`)
+- Compose **automatically network** bana dega - **DNS** bhi kaam karega
+
+**Task 3: Healthcheck Dependency Add Karna**
+- **`depends_on`** mein **condition** add karna hai: `service_healthy`
+- Matlab **app tab start** hoga jab **Redis ready** ho
+- Ye **production-grade** hai - **premature connections** se bachata hai
+- Redis mein **healthcheck** define karna padega
+
+**Task 4: .env File Banana**
+- **Sensitive data** (passwords, API keys) ko **code mein nahi** rakhna
+- **`.env` file** mein rakhna hai
+- Compose file mein **reference** karna hai: `${DB_PASSWORD}`
+- Ye **security best practice** hai
+
+**Task 5: App Code Mein Environment Variable Use Karna**
+- Code mein **hardcoded values** nahi
+- **Environment variable** se read karo (Python: `os.getenv('REDIS_HOST')`)
+- Ye **flexibility** deta hai - **config change** karne ke liye **code change** nahi karna padega
+
+**Task 6: Stack Start Karna**
+- **Ek command** se **saari services** start hongi
+- **Background mode** mein run hoga
+- **Network, volumes** sab **automatically** create honge
+
+**Task 7: Logs Dekhna**
+- **Specific service** ke logs dekh sakte ho
+- **Real-time** logs stream hote hain
+- **Debugging** ke liye useful
+
+**Task 8: Stack Stop Karna**
+- **Ek command** se **saari services** stop hongi
+- **Containers remove** honge
+- **Volumes safe** rahenge (data loss nahi hoga)
+
+**Task 9: Volume Compose Mein Add Karna**
+- Redis ke liye **named volume** define karna hai
+- **Data persistence** ke liye
+- Compose file mein **volumes section** mein declare karo
+
+**Task 10: Development Override File Banana**
+- **`docker-compose.override.yml`** file create karo
+- Ye **automatically merge** hoti hai main file ke saath
+- Isme **dev-specific** config rakho (debug ports, volume mounts for live reload)
+
+**Task 11: Production Config Alag Rakhna**
+- **`docker-compose.prod.yml`** file banao
+- Isme **production settings** rakho (resource limits, restart policies, security)
+- **Explicitly specify** karna padega run karte waqt
+
+**Task 12: Profiles Use Karna**
+- **Optional services** (monitoring, debugging tools) ko **profile** assign karo
+- **Selective start** kar sakte ho - sirf **needed services**
+- **Resource efficient**
+
+### 4. Definition of Done - Kaise Pata Chalega Success Hua?
+- **Ek command** se puri stack start ho rahi hai
+- App **Redis se connect** ho raha hai (healthcheck ke baad hi start hua)
+- **Down** karne par containers remove hote hain, **volume nahi** (data safe)
+- **Dev aur Prod** ke liye **alag configuration** successfully load ho rahi hai
+- **`.env` file** se variables properly load ho rahe hainaaki app tab start ho jab Redis ready ho.
 4.  **.env File Banayein** – Sensitive variables (passwords) aur config ko `.env` file mein rakho aur compose mein refer karo.
 5.  **App code mein Redis host environment variable se lo** – `os.getenv('REDIS_HOST')` ya equivalent.
 6.  **Compose se stack start karo** – `docker-compose up -d`.
