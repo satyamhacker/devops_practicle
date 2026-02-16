@@ -1,0 +1,58 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  # Base Ubuntu LTS box
+  config.vm.box = "bento/ubuntu-22.04"
+
+  # Networking
+  config.vm.network "private_network", ip: "192.168.57.10"
+  config.vm.network "forwarded_port", guest: 8080, host: 8080   # Jenkins
+  config.vm.network "forwarded_port", guest: 6443, host: 6443   # Kubernetes API
+
+  # Provider settings (VMware)
+  config.vm.provider "vmware_desktop" do |v|
+    v.gui = true
+    v.memory = 8192   # 8 GB RAM
+    v.cpus = 4        # 4 CPU cores
+    #v.disk = 50       # 50 GB disk
+  end
+
+  # Provisioning: install Docker, Ansible, Jenkins, Minikube
+  config.vm.provision "shell", inline: <<-SHELL
+    # Update system
+    sudo apt-get update -y
+    sudo apt-get upgrade -y
+
+    # Install Docker
+    sudo apt-get install -y docker.io
+    sudo systemctl enable docker --now
+    sudo usermod -aG docker vagrant
+
+    # Install Ansible
+    sudo apt-get install -y ansible
+
+    # Install Java (needed for Jenkins)
+    sudo apt-get install -y openjdk-11-jdk
+
+    # Add Jenkins repo
+    curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo tee \
+      /usr/share/keyrings/jenkins-keyring.asc > /dev/null
+    echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+      https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+      /etc/apt/sources.list.d/jenkins.list > /dev/null
+    sudo apt-get update -y
+    sudo apt-get install -y jenkins
+    sudo systemctl enable jenkins --now
+
+    # Install Minikube (for Kubernetes practice)
+    curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+    sudo install minikube-linux-amd64 /usr/local/bin/minikube
+    rm minikube-linux-amd64
+
+    # Install kubectl
+    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+    sudo install kubectl /usr/local/bin/kubectl
+    rm kubectl
+  SHELL
+end
