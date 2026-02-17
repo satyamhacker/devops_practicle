@@ -615,6 +615,18 @@ Email aur Slack se build status notify karna, aur JUnit test reports publish kar
 # Test results graph visible on job page ✅
 ```
 
+Extended E-mail vs Standard E-mail (Confusion Fix)
+Jenkins mein do email section hote hain. Aksar log dono mein confuse ho jaate hain.
+
+Extended E-mail Notification (emailext): Isme aapne SMTP smtp.gmail.com, Port 465, SSL aur Credentials set kiye honge.
+
+E-mail Notification (Standard): Page ke bilkul niche ek aur chota section hota hai. Wahan bhi wahi details bharo (SMTP: smtp.gmail.com, Port: 465, Authentication on).
+
+Wahan ek checkbox hota hai: "Test configuration by sending Test e-mail". Usse tick karke "Test" button dabao.
+
+Jab tak ye "Test" button se email aapke inbox mein nahi aata, pipeline se bhi nahi jayega.
+
+
 ---
 
 ### 🎛️ Level 12: Parameterized Pipeline
