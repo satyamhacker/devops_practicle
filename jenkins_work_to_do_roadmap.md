@@ -193,6 +193,22 @@ Jenkins ke encrypted credentials store mein secrets (passwords, tokens, files) s
 4. Test credential scoping: create a folder, add folder‑specific credential, try to use from outside.  
 5. Rotate a credential (update secret) and verify new value works.  
 6. Delete a credential and ensure pipeline fails with appropriate error.
+7. **⭐ INDUSTRY CRITICAL: `withCredentials` vs `environment` (Security Best Practice)**  
+   - `environment` exposes secret to ENTIRE pipeline (less secure)  
+   - `withCredentials` limits exposure to specific steps only (MORE SECURE!)  
+   - Example of secure approach:  
+   ```groovy
+   stage('Deploy') {
+       steps {
+           withCredentials([string(credentialsId: 'aws-key', variable: 'AWS_KEY')]) {
+               sh 'aws s3 cp file.txt s3://bucket/'
+               // AWS_KEY only available inside this block
+           }
+           // AWS_KEY not accessible here ✅
+       }
+   }
+   ```  
+   - Test: Try accessing credential outside `withCredentials` block – should fail
 
 **🚩 Flag Verification:**  
 ```bash
@@ -267,6 +283,21 @@ Builds ko dedicated agents (separate VMs) par chalaana, controller ko free rakhn
 8. Create a pipeline that uses label `static` and runs `hostname`.  
 9. Verify build runs on agent (console output shows agent hostname).  
 10. Ensure controller executors remain 0.
+11. **⭐ INDUSTRY CRITICAL: Java Version Compatibility (Common Production Issue)**  
+    - Check Controller Java version: `java -version` (e.g., openjdk 17)  
+    - On agent, intentionally install DIFFERENT version to see error:  
+      ```bash
+      sudo apt install openjdk-11-jdk -y
+      sudo update-alternatives --config java  # select Java 11
+      ```  
+    - Try connecting agent – observe error: "Remoting version mismatch"  
+    - Fix by matching versions:  
+      ```bash
+      sudo apt install openjdk-17-jdk -y
+      sudo update-alternatives --config java  # select Java 17
+      ```  
+    - Reconnect agent – should work now ✅  
+    - **Key Learning:** Controller aur Agent pe SAME Java version hona chahiye!
 
 **🚩 Flag Verification:**  
 ```bash
@@ -487,6 +518,12 @@ Declarative pipeline ke mandatory blocks: `agent`, `stages`, `post`, `options`, 
                    echo 'Testing...'
                }
            }
+           stage('Deploy to Prod') {
+               when { branch 'main' }  // ⭐ Conditional execution
+               steps {
+                   echo 'Deploying to Production...'
+               }
+           }
        }
        post {
            always {
@@ -505,6 +542,32 @@ Declarative pipeline ke mandatory blocks: `agent`, `stages`, `post`, `options`, 
 3. Verify timeout: add a `sleep 700` stage and see it abort after 10 minutes.  
 4. Trigger multiple builds concurrently – they should queue (disableConcurrent).  
 5. Check build history – only last 5 builds retained.
+6. **⭐ INDUSTRY CRITICAL: `when` Directive (Conditional Stages)**  
+   - Test conditional execution based on branch:  
+     - Create feature branch, push – Deploy stage SKIPPED ✅  
+     - Push to main branch – Deploy stage RUNS ✅  
+   - Add parameter-based condition:  
+     ```groovy
+     stage('Run Tests') {
+         when { expression { params.RUN_TESTS == true } }
+         steps { echo 'Running tests' }
+     }
+     ```  
+   - Combine multiple conditions:  
+     ```groovy
+     when {
+         allOf {
+             branch 'main'
+             expression { params.ENV == 'Prod' }
+         }
+     }
+     ```
+7. **⭐ INDUSTRY SECRET: Pipeline Syntax Generator**  
+   - Open any pipeline job → Click "Pipeline Syntax" link (left sidebar)  
+   - Select "Snippet Generator"  
+   - Generate snippets for: `echo`, `git`, `sshagent`, `withCredentials`, `input`  
+   - Copy-paste generated code into Jenkinsfile  
+   - **Pro Tip:** Senior engineers use this instead of memorizing syntax!
 
 **🚩 Flag Verification:**  
 ```bash
@@ -1151,6 +1214,45 @@ Jenkins pipeline se Docker image build karna aur registry push karna.
 3. Ensure `Dockerfile` exists in repo.  
 4. Run build – image built and pushed.  
 5. Verify on Docker Hub.
+6. **⭐ INDUSTRY CRITICAL: DevSecOps Integration (Security Scanning)**  
+   - Install SonarQube plugin for code quality scanning  
+   - Configure SonarQube server: Manage Jenkins → Configure System → SonarQube servers  
+   - Add code quality scan stage:  
+     ```groovy
+     stage('Code Quality Scan') {
+         steps {
+             withSonarQubeEnv('SonarQube') {
+                 sh 'mvn sonar:sonar'  // or your build tool
+             }
+         }
+     }
+     ```  
+   - Install Trivy for container vulnerability scanning:  
+     ```bash
+     sudo apt install wget apt-transport-https gnupg lsb-release
+     wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+     echo "deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
+     sudo apt update && sudo apt install trivy
+     ```  
+   - Add container scan stage:  
+     ```groovy
+     stage('Container Security Scan') {
+         steps {
+             sh 'trivy image --severity HIGH,CRITICAL myapp:${BUILD_NUMBER}'
+         }
+     }
+     ```  
+   - Add Quality Gate (fail build if security threshold not met):  
+     ```groovy
+     stage('Quality Gate') {
+         steps {
+             timeout(time: 5, unit: 'MINUTES') {
+                 waitForQualityGate abortPipeline: true
+             }
+         }
+     }
+     ```  
+   - **Key Learning:** Production mein bina security scan ke code deploy nahi hota!
 
 **🚩 Flag Verification:**  
 ```bash
