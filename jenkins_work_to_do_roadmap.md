@@ -1,12 +1,3 @@
-# 🎮 Jenkins Quest: The Ultimate 30-Level Hardcore Roadmap (Fully Detailed & Verified)
-
-> Pawan, yeh hai **final, complete, aur 100% consistent roadmap** – har level ke saath **Concept, Why, Mission (step‑by‑step tasks), aur Flag Verification** diya gaya hai.  
-> Maine tumhare previous blueprint ko **double‑checked** aur **saari missing details** (jaise Level 7 ka Concept/Why) add kar di hain.  
-> Ab har level ek jaisa structure follow karta hai, aur koi bhi step miss nahi hai.  
-> **Yeh roadmap tumhe beginner se Jenkins Architect banayega!** 🏆
-
----
-
 ## 🏰 PHASE 0 & 1: The Command Center (Infra & OS)
 
 ### 🛡️ Level 0: Hardening the Gate (OS Hardening)
