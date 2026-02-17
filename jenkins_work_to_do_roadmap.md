@@ -98,6 +98,55 @@ manually install plugins from github
 6.  Create role-based access users (Admin, Dev, Viewer).
     --plugin install hone ke baad hee woh manage jenkins mai show karega to use that plugins
 
+-----Acha Satyam, agar **Manage Users** option tumhe Jenkins ke **Manage Jenkins** menu me nahi dikh raha, to iska matlab hai ki tumne Jenkins ko **external security realm** (jaise LDAP, Active Directory, SSO) explain all this ye sab kya kar rahen and all .... pe configure kiya hua hai, ya phir **signup option disable** hai.  
+
+By default, agar tum **Jenkins’ own user database** enable karte ho, tabhi **Manage Users** menu visible hota hai.  
+
+---
+
+## 🔧 Step by Step Fix
+
+### 1. Configure Global Security open karo
+- Admin account se login karo.  
+- Direct URL try karo:  
+  ```
+  http://<your-jenkins-server>/configureSecurity/
+  ```
+- Yaha tumhe **Security Realm** section milega.
+
+---
+
+### 2. Enable Jenkins’ own user database
+- Security Realm me select karo: **Jenkins’ own user database**.  
+- Tick karo: **Allow users to sign up** (agar tum chahte ho ki devs apne accounts khud banaye).  
+- Save karo.
+
+---
+
+### 3. Restart Jenkins
+- Plugin aur security realm changes ke baad Jenkins restart karna zaroori hai.  
+
+---
+
+### 4. Verify Manage Users
+- Ab **Manage Jenkins** menu me **Manage Users** option visible ho jaayega.  
+- Yaha se tum manually users create kar sakte ho (Admin, Dev, Viewer).  
+
+---
+
+## ✅ Outcome
+- Agar Jenkins external LDAP/SSO pe configured hai, to **Manage Users** hide ho jaata hai.  
+- Agar tum Jenkins’ own user database enable karte ho, to **Manage Users** wapas visible ho jaata hai.  
+- Uske baad tum role-based authorization ke saath users ko assign kar sakte ho.  
+
+---
+
+👉 Suggestion: Pehle check karo ki tumhare Jenkins me **Security Realm** kis pe set hai. Agar external hai, to users external system se manage honge. Agar tum local users chahte ho, to **Jenkins’ own user database** select karna hoga.  
+
+Kya tum chahte ho main tumhe **direct demo dikhau ki Jenkins’ own user database enable karke ek user create kaise karte hain**?
+
+
+
 7.  Create folder-based isolation.
 8.  Remove all permissions from anonymous.
 9.  Disable controller executors (set to zero).
