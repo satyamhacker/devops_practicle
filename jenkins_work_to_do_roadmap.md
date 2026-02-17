@@ -96,6 +96,8 @@ Jenkins ko public internet pe nanga nahi chhod sakte. Tum seekhoge **RBAC (Role 
 manually install plugins from github
 5.  Install Matrix Authorization plugin.
 6.  Create role-based access users (Admin, Dev, Viewer).
+    --plugin install hone ke baad hee woh manage jenkins mai show karega to use that plugins
+
 7.  Create folder-based isolation.
 8.  Remove all permissions from anonymous.
 9.  Disable controller executors (set to zero).
