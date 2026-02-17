@@ -685,6 +685,9 @@ Workspace manage karna, `cleanWs()` use karna, aur custom workspaces avoid colli
 # After cleanup: workspace directory deleted ✅
 ```
 
+1. Workspace kya hai?
+Jab Jenkins build shuru karta hai, toh woh Agent ke upar ek folder banata hai (aksar /var/lib/jenkins/workspace/job-name ke naam se). Saara kaam isi ke andar hota hai.
+
 ---
 
 ## ⚡ PHASE 6: The Overclock (Optimization)
