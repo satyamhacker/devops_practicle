@@ -638,6 +638,11 @@ Tum seekhoge ki **containers ko monitor** kaise karte hain, **automatic recovery
 - `docker exec <container> kill 1` (PID 1 ko kill karo)
 - Container **automatically restart** hona chahiye
 - Logs mein **restart event** dikhega
+Restart policies:
+- no → Default, container crash hone par restart nahi hoga.
+- always → Container crash ho ya manually stop ho, restart hoga (except docker stop).
+- on-failure → Sirf tab restart hoga jab process non‑zero exit code ke saath crash kare.
+- unless-stopped → Hamesha restart hoga jab tak tum manually docker stop na karo.
 
 **Task 7: Restart Count Verify Karna**
 - `docker inspect` se **restart count** dekhna hai
