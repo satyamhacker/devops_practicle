@@ -93,6 +93,7 @@ Jenkins ko public internet pe nanga nahi chhod sakte. Tum seekhoge **RBAC (Role 
 2.  Disable anonymous access.
 3.  Force login required.
 4.  Install Folders plugin.
+manually install plugins from github
 5.  Install Matrix Authorization plugin.
 6.  Create role-based access users (Admin, Dev, Viewer).
 7.  Create folder-based isolation.
