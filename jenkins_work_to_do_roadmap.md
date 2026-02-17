@@ -346,6 +346,8 @@ docker ps -a | grep jenkins-agent  # ❌ no leftover container
 **💡 The Concept – Kya Seekhoge?**  
 Agents ko controller se isolated rakhna, agent‑to‑controller security enable karna, aur agents ko limited privileges dena.
 
+explain what is agent and controller...
+
 **🔥 Why & Learning Outcome – Kyun Zaroori Hai?**  
 **Real Horror Story:** Ek agent compromise ho gaya. Hacker ne agent se controller ke secrets read kar liye kyunki agent‑to‑controller security enable nahi thi. Pura Jenkins compromised ho gaya! 😱
 
