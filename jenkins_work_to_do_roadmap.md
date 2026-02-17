@@ -299,6 +299,42 @@ Scripted pipeline purana ho gaya. Tum seekhoge **Declarative Pipeline** (`Jenkin
 ✅ 10 minute se zyada chalne pe build abort ho jaye.
 ✅ Build success/fail hone pe post actions execute hon.
 
+
+### Level 11-B – Notifications & Reporting (Email/Slack)
+Concept:
+Build ke result ko team tak pahunchana – email aur Slack ke through.
+
+Real-World Scenario:
+
+Prod build fail hua, par kisi ko pata nahi chala. Bug live ho gaya.
+
+Notification aate hi team ne fix kiya aur downtime kam hui.
+
+Practical Tasks:
+
+Email Extension Plugin install karo.
+
+SMTP settings configure karo (Gmail SMTP example – App Password use karna).
+
+Slack Plugin install karo aur Slack App create karo, token Jenkins credentials mein add karo.
+
+Pipeline mein post block mein failure condition par email aur slack message bhejo.
+
+Email ke liye emailext step use karo.
+
+Slack ke liye slackSend step use karo.
+
+Test karo ki failure par notification aata hai ya nahi.
+
+unstable condition par alag notification bhejo.
+
+Definition of Done:
+✅ Build fail hone par Slack channel mein message aaye.
+✅ Team ke email ID par failure mail aaye.
+✅ Console logs mein secrets masked hon.
+✅ Test reports (JUnit) publish ho kar UI mein dikhein.
+
+
 ## 🔍 Level 12 — Parameterized Pipelines
 
 ### 1. The Concept - Kya Seekhoge?
@@ -387,7 +423,29 @@ Code repetition mat karo. Tum seekhoge **Shared Libraries** banao taaki common l
 ✅ Library update karne pe bina job change kiye naya logic chale.
 ✅ Library versioning se stability maintain ho.
 
-## 🔍 Level 16 — Failure Handling & Classification
+
+### Level 16-A – Running Jenkins Controller as Docker Container
+
+Concept: Jenkins controller ko Docker container mein run karo, persistent volume ke saath, taaki easily upgrade/migrate kar sake.
+
+Practical Tasks:
+
+Docker install karo.
+
+jenkins/jenkins:lts-jdk17 image pull karo.
+
+Volume create karo: docker volume create jenkins_home
+
+Container run karo with volume mount and port mapping.
+
+Initial password retrieve karo aur login karo.
+
+Container restart karo aur verify karo ki data safe hai.
+
+Backup/restore volume ka practice karo.
+
+
+## 🔍 Level 16B — Failure Handling & Classification
 
 ### 1. The Concept - Kya Seekhoge?
 Har failure same nahi hoti. Tum seekhoge **Retry** karna aur **Unstable** mark karna.
