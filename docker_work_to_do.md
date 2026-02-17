@@ -595,6 +595,18 @@ Tum seekhoge ki **containers ko monitor** kaise karte hain, **automatic recovery
 - **Start-period:** 5 seconds (startup ke liye grace period)
 - **Retries:** 3 (3 baar fail hone par unhealthy)
 - Command: `curl -f http://localhost:5000/ || exit 1`
+- Dockerfile mein HEALTHCHECK add karna
+- Interval: 30s
+- Timeout: 3s
+- Start-period: 5s
+- Retries: 3
+- Command: curl -f http://localhost:5000/ || exit 1
+- Tumne poocha: Ye command ka output kaun run karega?
+- Docker daemon run karta hai container ke andar, har interval pe.
+- Tumne analogy banayi: Matlab ek cron job jaisa hai jo container me chal raha hai… aur agar return 0 hua to kya email trigger hoga?
+- Answer: Output sirf health metadata me store hota hai, email/alerts ke liye external monitoring tools chahiye.
+- Tumne poocha: Ye command ka output kahaan jaata hai?
+- Answer: Normal logs me nahi, health metadata me store hota hai. Tumhe docker inspect se check karna hoga.
 
 **Task 2: Health Image Build Karna**
 - Nayi Dockerfile se image build karni hai
