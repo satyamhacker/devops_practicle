@@ -726,6 +726,15 @@ Independent stages ko parallel mein chala kar build time reduce karna.
 # Total time < sum of individual times ✅
 ```
 
+
+Explain (Hinglish):
+- parallel block ke andar jo stages hain, woh simultaneously chalenge.
+- failFast true matlab agar koi branch fail ho jaaye to baki branches ko jaldi abort kar dena.
+- Agar failFast nahi rakhoge to ek branch fail hone par bhi doosre branches complete karenge.
+Parallel stages se build time significant kam ho sakta hai.
+
+
+
 ---
 
 ### 📚 Level 15: Shared Libraries (DRY)
