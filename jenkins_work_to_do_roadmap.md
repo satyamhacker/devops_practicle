@@ -733,6 +733,8 @@ Explain (Hinglish):
 - Agar failFast nahi rakhoge to ek branch fail hone par bhi doosre branches complete karenge.
 Parallel stages se build time significant kam ho sakta hai.
 
+Explain: stash artifacts ko controller pe temporarily store karta hai; har branch unstash karke apna copy le lega. Use this when branches run on same nod
+
 
 
 ---
